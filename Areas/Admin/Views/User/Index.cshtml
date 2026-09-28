@@ -1,0 +1,80 @@
+@model UserWithFilterVM
+
+<div class="row g-3 mb-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex flex-between-center">
+                <h5 class="mb-0">Staff Accounts</h5>
+            </div>
+            <div class="card-body border-top">
+                <form class="row g-2 mb-3">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" placeholder="Search by name or email" name="query" value="@Model.Query">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Filter</button>
+                    </div>
+                </form>
+
+                <div class="table-responsive scrollbar">
+                    <table class="table table-sm fs-9 mb-0">
+                        <thead class="bg-body-tertiary">
+                            <tr>
+                                <th class="text-900">Full Name</th>
+                                <th class="text-900">User Name</th>
+                                <th class="text-900">Email</th>
+                                <th class="text-900">Role</th>
+                                <th class="text-900 text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Users)
+                            {
+                                <tr class="border-bottom border-200">
+                                    <td class="align-middle fw-semi-bold">@item.FullName</td>
+                                    <td class="align-middle">@item.UserName</td>
+                                    <td class="align-middle">@item.Email</td>
+                                    <td class="align-middle">
+                                        <span class="badge text-bg-info">@item.Role</span>
+                                    </td>
+                                    <td class="align-middle text-end">
+                                        <form asp-action="ChangeRole" method="post" class="d-flex justify-content-end gap-1">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <select name="role" class="form-select form-select-sm" style="width: auto;">
+                                                <option value="@RoleConstants.EMPLOYEE" selected="@(item.Role == RoleConstants.EMPLOYEE)">Employee</option>
+                                                <option value="@RoleConstants.ADMIN" selected="@(item.Role == RoleConstants.ADMIN)">Admin</option>
+                                            </select>
+                                            <button type="submit" class="btn btn-sm btn-outline-primary">Save</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-center border-top">
+                <nav>
+                    <ul class="pagination mb-0">
+                        @if (Model.CurrentPage > 1)
+                        {
+                            <li class="page-item"><a class="page-link" href="/Admin/User/Index?page=@(Model.CurrentPage - 1)">&laquo;</a></li>
+                        }
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")"><a class="page-link" href="/Admin/User/Index?page=@i">@i</a></li>
+                        }
+                        @if (Model.CurrentPage != Model.TotalPages)
+                        {
+                            <li class="page-item"><a class="page-link" href="/Admin/User/Index?page=@(Model.CurrentPage + 1)">&raquo;</a></li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Notification {
+    <partial name="_NotificationPartial" />
+}

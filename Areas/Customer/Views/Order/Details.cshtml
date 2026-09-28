@@ -1,0 +1,62 @@
+@model IEnumerable<OrderItem>
+
+@{
+    ViewData["Title"] = "Order Details";
+    var orderId = Model.Any() ? Model.First().OrderId : 0;
+}
+
+<h4 class="mb-3">Order #@orderId</h4>
+
+<div class="card">
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Movie</th>
+                    <th>Seat</th>
+                    <th>Showtime</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var canCancel = item.Status == TicketStatus.Confirmed && item.Movie.DateTime - DateTime.Now >= TimeSpan.FromHours(24);
+
+                    <tr>
+                        <td>@item.Movie.Name</td>
+                        <td><span class="badge text-bg-info">@item.Seat.SeatNumber</span></td>
+                        <td>@item.Movie.DateTime.ToString("dd MMM yyyy, hh:mm tt")</td>
+                        <td>@item.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</td>
+                        <td>
+                            @if (item.Status == TicketStatus.Confirmed)
+                            {
+                                <span class="badge text-bg-success">Confirmed</span>
+                            }
+                            else
+                            {
+                                <span class="badge text-bg-secondary">Canceled</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            @if (canCancel)
+                            {
+                                <a asp-action="CancelTicket" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger btn-delete">Cancel</a>
+                            }
+                            else if (item.Status == TicketStatus.Confirmed)
+                            {
+                                <span class="fs-11 text-muted">Can't cancel (less than 24h left)</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Notification {
+    <partial name="_NotificationPartial" />
+}

@@ -1,0 +1,10 @@
+@{
+    ViewData["Title"] = "Payment Canceled";
+}
+
+<div class="text-center py-5">
+    <span class="fas fa-times-circle fs-1 text-danger mb-3 d-block"></span>
+    <h4>Payment Canceled</h4>
+    <p class="text-muted">Your seats are still held in your cart. You can try paying again anytime.</p>
+    <a asp-area="Customer" asp-controller="Cart" asp-action="Index" class="btn btn-primary">Back to Cart</a>
+</div>

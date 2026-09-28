@@ -1,0 +1,110 @@
+@model ActorWithFilterVM
+
+<div class="row g-3 mb-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex flex-between-center">
+                <h5 class="mb-0">All Actors</h5>
+                @if (User.IsInRole(RoleConstants.SUPER_ADMIN) || User.IsInRole(RoleConstants.ADMIN))
+                {
+                    <a href="/Admin/Actor/Create" class="btn btn-falcon-default btn-sm"><span class="fas fa-plus me-1"></span>Create</a>
+                }
+            </div>
+            <div class="card-body border-top">
+                <form class="row g-2 mb-3">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" placeholder="Search by name" name="query" value="@Model.Query">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Filter</button>
+                    </div>
+                </form>
+
+                <div class="table-responsive scrollbar">
+                    <table class="table table-sm fs-9 mb-0">
+                        <thead class="bg-body-tertiary">
+                            <tr>
+                                <th class="text-900">#</th>
+                                <th class="text-900">Img</th>
+                                <th class="text-900">Name</th>
+                                <th class="text-900">Status</th>
+                                <th class="text-900 text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Actors)
+                            {
+                                <tr class="border-bottom border-200">
+                                    <td class="align-middle">@item.Id</td>
+                                    <td class="align-middle"><img class="rounded-1 border border-200" src="/imgs/actors/@item.Img" width="60" alt="" /></td>
+                                    <td class="align-middle fw-semi-bold">@item.Name</td>
+                                    <td class="align-middle">
+                                        @if (item.Status)
+                                        {
+                                            <span class="badge text-bg-success">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge text-bg-danger">In Active</span>
+                                        }
+                                    </td>
+                                    <td class="align-middle text-end">
+                                        @if (User.IsInRole(RoleConstants.SUPER_ADMIN) || User.IsInRole(RoleConstants.ADMIN))
+                                        {
+                                            <a href="/Admin/Actor/Update/@item.Id" class="btn btn-sm btn-outline-primary"><span class="fas fa-pen me-1"></span>Edit</a>
+                                        <a href="/Admin/Actor/Delete/@item.Id" class="btn btn-sm btn-outline-danger btn-delete"><span class="fas fa-trash-alt me-1"></span>Delete</a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-center border-top">
+                <nav>
+                    <ul class="pagination mb-0">
+                        @if (Model.CurrentPage > 1)
+                        {
+                            <li class="page-item"><a class="page-link" href="/Admin/Actor/Index?page=@(Model.CurrentPage - 1)">&laquo;</a></li>
+                        }
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")"><a class="page-link" href="/Admin/Actor/Index?page=@i">@i</a></li>
+                        }
+                        @if (Model.CurrentPage != Model.TotalPages)
+                        {
+                            <li class="page-item"><a class="page-link" href="/Admin/Actor/Index?page=@(Model.CurrentPage + 1)">&raquo;</a></li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".btn-delete").forEach(function (button) {
+            button.addEventListener("click", function (e) {
+                e.preventDefault();
+                const url = this.getAttribute("href");
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "This action cannot be undone!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) window.location.href = url;
+                });
+            });
+        });
+    });
+</script>
+
+@section Notification {
+    <partial name="_NotificationPartial" />
+}

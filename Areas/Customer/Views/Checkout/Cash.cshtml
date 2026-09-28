@@ -1,0 +1,27 @@
+@model Order
+
+@{
+    ViewData["Title"] = "Booking Confirmed - Pay at Counter";
+}
+
+<div class="text-center py-5">
+    <span class="fas fa-money-bill-wave fs-1 text-warning mb-3 d-block"></span>
+    <h4>Booking Confirmed!</h4>
+    <p class="text-muted mb-1">Your seat(s) are reserved. Order #@Model.Id</p>
+    <p class="text-muted">
+        Please pay <strong>@Model.TotalPrice.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</strong>
+        in cash at the counter before the movie starts to keep your reservation.
+    </p>
+
+    <div class="alert alert-warning d-inline-block my-3">
+        <span class="fas fa-clock me-1"></span> Payment status: <strong>Pending</strong> — not paid yet
+    </div>
+
+    <div>
+        <a asp-area="Customer" asp-controller="Order" asp-action="Details" asp-route-id="@Model.Id" class="btn btn-primary">View My Tickets</a>
+    </div>
+</div>
+
+@section Notification {
+    <partial name="_NotificationPartial" />
+}

@@ -1,0 +1,71 @@
+@model OrderWithFilterVM
+
+@{
+    ViewData["Title"] = "My Bookings";
+}
+
+<h4 class="mb-3">My Bookings</h4>
+
+<form class="row g-2 mb-3">
+    <div class="col-md-3">
+        <input type="number" class="form-control" name="query" placeholder="Search by order #" value="@Model.Query">
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Search</button>
+    </div>
+</form>
+
+@if (!Model.Orders.Any())
+{
+    <p class="text-muted">You don't have any bookings yet.</p>
+}
+else
+{
+    <div class="card">
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Date</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model.Orders)
+                    {
+                        <tr>
+                            <td>#@order.Id</td>
+                            <td>@order.CreateAt?.ToString("dd MMM yyyy")</td>
+                            <td>@order.TotalPrice.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</td>
+                            <td><span class="badge text-bg-success">@order.OrderStatus</span></td>
+                            <td class="text-end">
+                                <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-outline-primary">View Tickets</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer d-flex justify-content-center border-top">
+            <nav>
+                <ul class="pagination mb-0">
+                    @if (Model.CurrentPage > 1)
+                    {
+                        <li class="page-item"><a class="page-link" href="/Customer/Order/Index?page=@(Model.CurrentPage - 1)">&laquo;</a></li>
+                    }
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")"><a class="page-link" href="/Customer/Order/Index?page=@i">@i</a></li>
+                    }
+                    @if (Model.CurrentPage != Model.TotalPages)
+                    {
+                        <li class="page-item"><a class="page-link" href="/Customer/Order/Index?page=@(Model.CurrentPage + 1)">&raquo;</a></li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    </div>
+}

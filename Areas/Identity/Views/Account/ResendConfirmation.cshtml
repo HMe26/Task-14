@@ -1,0 +1,30 @@
+@model ResendEmailConfirmationVM
+
+@{
+    ViewData["Title"] = "Resend Confirmation";
+}
+
+<h4 class="mb-3">Resend Confirmation Email</h4>
+<p class="fs-10 text-muted">Enter your email or user name and we'll send you a new confirmation link.</p>
+
+<form method="post">
+    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+    <div class="mb-3">
+        <label asp-for="EmailOrUserName" class="form-label"></label>
+        <input asp-for="EmailOrUserName" class="form-control" />
+        <span asp-validation-for="EmailOrUserName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary d-block w-100">Send</button>
+    </div>
+</form>
+
+<div class="text-center">
+    <a asp-action="Login">Back to Login</a>
+</div>
+
+@section Notification {
+    <partial name="_NotificationPartial" />
+}

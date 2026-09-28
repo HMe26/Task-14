@@ -1,0 +1,49 @@
+@model Actor
+
+<div class="row g-3 mb-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Update Actor</h5>
+            </div>
+            <div class="card-body border-top">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <form method="post" enctype="multipart/form-data">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="Name"></label>
+                        <input class="form-control" asp-for="Name">
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label d-block">Current Image</label>
+                        <img src="/imgs/actors/@Model.Img" width="100" class="rounded-1 border border-200 mb-2" />
+                        <label class="form-label">Replace Image (optional)</label>
+                        <input type="file" class="form-control" name="Img" accept="image/*">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select name="Status" class="form-select">
+                            @if (Model.Status)
+                            {
+                                <option value="true" selected>Active</option>
+                                <option value="false">In Active</option>
+                            }
+                            else
+                            {
+                                <option value="true">Active</option>
+                                <option value="false" selected>In Active</option>
+                            }
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <a href="/Admin/Actor/Index" class="btn btn-falcon-default">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Notification {
+    <partial name="_NotificationPartial" />
+}

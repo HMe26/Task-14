@@ -1,0 +1,24 @@
+@if (TempData[NotificationConstants.SUCCESS_NOTIFICATION] is not null)
+{
+    <script>
+        toastr.success('@TempData[$"{NotificationConstants.SUCCESS_NOTIFICATION}"]')
+    </script>
+}
+else if (TempData[NotificationConstants.ERROR_NOTIFICATION] is not null)
+{
+    <script>
+        toastr.error('@TempData[$"{NotificationConstants.ERROR_NOTIFICATION}"]')
+    </script>
+}
+else if (TempData[NotificationConstants.WARNING_NOTIFICATION] is not null)
+{
+    <script>
+        toastr.warning('@TempData[$"{NotificationConstants.WARNING_NOTIFICATION}"]')
+    </script>
+}
+else if (TempData[NotificationConstants.INFORMATION_NOTIFICATION] is not null)
+{
+    <script>
+        toastr.info('@TempData[$"{NotificationConstants.INFORMATION_NOTIFICATION}"]')
+    </script>
+}

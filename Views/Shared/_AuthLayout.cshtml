@@ -1,0 +1,98 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en-US">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CinemaApp | @ViewData["Title"]</title>
+
+    <script src="/assets/js/config.js"></script>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700%7cPoppins:300,400,500,600,700,800,900&amp;display=swap" rel="stylesheet">
+    <link href="/assets/css/theme.css" rel="stylesheet" id="style-default">
+</head>
+
+<body class="bg-100">
+    <main class="main" id="top">
+        <div class="container-fluid">
+            <div class="row min-vh-100 flex-center g-0">
+                <div class="col-11 col-sm-8 col-lg-5 col-xl-4 col-xxl-3 py-5">
+
+                    <div class="d-flex justify-content-end mb-2">
+                        <div class="dropdown theme-control-dropdown">
+                            <a class="nav-link d-flex align-items-center dropdown-toggle fa-icon-wait fs-9 pe-1 py-0" href="#" role="button" id="themeSwitchDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="fas fa-sun fs-7" data-fa-transform="shrink-2" data-theme-dropdown-toggle-icon="light"></span>
+                                <span class="fas fa-moon fs-7" data-fa-transform="shrink-3" data-theme-dropdown-toggle-icon="dark"></span>
+                                <span class="fas fa-adjust fs-7" data-fa-transform="shrink-2" data-theme-dropdown-toggle-icon="auto"></span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end dropdown-caret border py-0 mt-3" aria-labelledby="themeSwitchDropdown">
+                                <div class="bg-white dark__bg-1000 rounded-2 py-2">
+                                    <button class="dropdown-item d-flex align-items-center gap-2" type="button" value="light" data-theme-control="theme"><span class="fas fa-sun"></span>Light<span class="fas fa-check dropdown-check-icon ms-auto text-600"></span></button>
+                                    <button class="dropdown-item d-flex align-items-center gap-2" type="button" value="dark" data-theme-control="theme"><span class="fas fa-moon"></span>Dark<span class="fas fa-check dropdown-check-icon ms-auto text-600"></span></button>
+                                    <button class="dropdown-item d-flex align-items-center gap-2" type="button" value="auto" data-theme-control="theme"><span class="fas fa-adjust"></span>Auto<span class="fas fa-check dropdown-check-icon ms-auto text-600"></span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body p-4 p-sm-5">
+                            <div class="text-center mb-4">
+                                <img class="me-2" src="/assets/img/icons/spot-illustrations/falcon.png" alt="" width="40" />
+                                <span class="font-sans-serif text-primary fs-4">CinemaApp</span>
+                            </div>
+
+                            @RenderBody()
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="/vendors/popper/popper.min.js"></script>
+    <script src="/vendors/bootstrap/bootstrap.min.js"></script>
+    <script src="/vendors/fontawesome/all.min.js"></script>
+    <script>
+        (function () {
+            var STORAGE_KEY = 'theme';
+
+            function applyTheme(theme) {
+                var resolved = theme;
+                if (theme === 'auto') {
+                    resolved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                }
+                document.documentElement.setAttribute('data-bs-theme', resolved);
+
+                document.querySelectorAll('[data-theme-dropdown-toggle-icon]').forEach(function (el) {
+                    el.classList.toggle('d-none', el.getAttribute('data-theme-dropdown-toggle-icon') !== theme);
+                });
+                document.querySelectorAll('[data-theme-control="theme"]').forEach(function (btn) {
+                    btn.classList.toggle('active', btn.getAttribute('value') === theme);
+                });
+            }
+
+            applyTheme(localStorage.getItem(STORAGE_KEY) || 'light');
+
+            document.querySelectorAll('[data-theme-control="theme"]').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var value = btn.getAttribute('value');
+                    localStorage.setItem(STORAGE_KEY, value);
+                    applyTheme(value);
+                });
+            });
+        })();
+    </script>
+    @RenderSection("Scripts", false)
+    @RenderSection("Notification", false)
+</body>
+
+</html>

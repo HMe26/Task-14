@@ -1,0 +1,47 @@
+@model Category
+
+<div class="row g-3 mb-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Update Category</h5>
+            </div>
+            <div class="card-body border-top">
+                <form method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="mb-3">
+                        <label for="Name" class="form-label">Name</label>
+                        <input class="form-control" asp-for="Name">
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Description" class="form-label">Description</label>
+                        <textarea class="form-control" placeholder="Leave a description here" asp-for="Description"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Status" class="form-label">Status</label>
+                        <select name="Status" class="form-select" aria-label="Status">
+                            @if (Model.Status)
+                            {
+                                <option value="true" selected>Active</option>
+                                <option value="false">In Active</option>
+                            }
+                            else
+                            {
+                                <option value="true">Active</option>
+                                <option value="false" selected>In Active</option>
+                            }
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <a href="/Admin/Category/Index" class="btn btn-falcon-default">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Notification {
+    <partial name="_NotificationPartial" />
+}

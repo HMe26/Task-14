@@ -1,0 +1,39 @@
+@model Cinema
+
+<div class="row g-3 mb-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Create New Cinema</h5>
+            </div>
+            <div class="card-body border-top">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <form method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="Name"></label>
+                        <input class="form-control" asp-for="Name">
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Image</label>
+                        <input type="file" class="form-control" name="Img" accept="image/*">
+                        <span asp-validation-for="Img" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select name="Status" class="form-select">
+                            <option value="true">Active</option>
+                            <option value="false" selected>In Active</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <a href="/Admin/Cinema/Index" class="btn btn-falcon-default">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Notification {
+    <partial name="_NotificationPartial" />
+}

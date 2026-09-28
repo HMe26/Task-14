@@ -1,0 +1,14 @@
+@{
+    ViewData["Title"] = "Payment Successful";
+}
+
+<div class="text-center py-5">
+    <span class="fas fa-check-circle fs-1 text-success mb-3 d-block"></span>
+    <h4>Payment Successful!</h4>
+    <p class="text-muted">Your tickets are confirmed. Order #@ViewData["OrderId"]</p>
+    <a asp-area="Customer" asp-controller="Order" asp-action="Details" asp-route-id="@ViewData["OrderId"]" class="btn btn-primary">View My Tickets</a>
+</div>
+
+@section Notification {
+    <partial name="_NotificationPartial" />
+}

@@ -1,0 +1,145 @@
+@model MovieWithRelatedVM
+
+@{
+    ViewData["Title"] = Model.Movie.Name;
+}
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <img class="img-fluid rounded-2 w-100" style="max-height:480px;object-fit:cover;" src="/imgs/movies/@Model.Movie.MainImg" alt="@Model.Movie.Name" />
+
+        @if (Model.Movie.SubImages.Any())
+        {
+            <div class="row g-2 mt-2">
+                @foreach (var sub in Model.Movie.SubImages)
+                {
+                    <div class="col-3">
+                        <img class="img-fluid rounded-1 border" src="/imgs/movies/sub-imgs/@sub.SubImg" alt="" />
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="col-lg-7">
+        <div class="d-flex justify-content-between align-items-start">
+            <h3 class="mb-1">@Model.Movie.Name</h3>
+
+            @if (User.Identity is not null && User.Identity.IsAuthenticated)
+            {
+                <a asp-area="Customer" asp-controller="Favorite" asp-action="Toggle" asp-route-movieId="@Model.Movie.Id" class="btn btn-sm @(Model.IsFavorite ? "btn-danger" : "btn-outline-danger")" title="Favorite">
+                    <span class="fas fa-heart"></span>
+                </a>
+            }
+        </div>
+        <p class="text-muted mb-3">@Model.Movie.Category?.Name &middot; @Model.Movie.Cinema?.Name</p>
+
+        <h4 class="text-primary mb-3">@Model.Movie.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</h4>
+
+        <p class="mb-3"><span class="fas fa-calendar-alt me-2 text-muted"></span>@Model.Movie.DateTime.ToString("dddd, dd MMM yyyy - hh:mm tt")</p>
+
+        @if (!string.IsNullOrWhiteSpace(Model.Movie.Des))
+        {
+            <p class="mb-4">@Model.Movie.Des</p>
+        }
+
+        @if (Model.Actors.Any())
+        {
+            <h6 class="mb-2">Cast</h6>
+            <div class="d-flex flex-wrap gap-3 mb-4">
+                @foreach (var actor in Model.Actors)
+                {
+                    <div class="text-center" style="width:80px;">
+                        <img class="rounded-circle mb-1" width="60" height="60" style="object-fit:cover;" src="/imgs/actors/@actor.Img" alt="@actor.Name" />
+                        <p class="fs-11 mb-0">@actor.Name</p>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h5 class="mb-0">Choose Your Seat</h5>
+    </div>
+    <div class="card-body">
+        @if (!Model.CanBook)
+        {
+            <p class="text-muted mb-0">This movie has already started — booking is closed.</p>
+        }
+        else if (User.Identity is null || !User.Identity.IsAuthenticated)
+        {
+            <p class="mb-0">Please <a asp-area="Identity" asp-controller="Account" asp-action="Login">login</a> to book a seat.</p>
+        }
+        else
+        {
+            <div class="text-center mb-4">
+                <div class="bg-body-tertiary rounded-2 py-2 mb-4 fs-10 text-muted">SCREEN</div>
+
+                @{
+                    var rows = Model.Seats.GroupBy(e => e.RowLabel).OrderBy(g => g.Key);
+                }
+
+                @foreach (var row in rows)
+                {
+                    <div class="d-flex justify-content-center gap-1 mb-1">
+                        <span class="align-self-center fs-11 text-muted me-2" style="width:16px;">@row.Key</span>
+                        @foreach (var seat in row.OrderBy(e => e.ColumnNumber))
+                        {
+                            if (seat.IsBooked)
+                            {
+                                <button type="button" class="btn btn-sm btn-secondary disabled" style="width:36px;" title="Booked">@seat.ColumnNumber</button>
+                            }
+                            else if (seat.IsInMyCart)
+                            {
+                                <a asp-area="Customer" asp-controller="Cart" asp-action="Index" class="btn btn-sm btn-warning" style="width:36px;" title="In your cart">@seat.ColumnNumber</a>
+                            }
+                            else
+                            {
+                                <a asp-area="Customer" asp-controller="Cart" asp-action="AddToCart" asp-route-movieId="@Model.Movie.Id" asp-route-seatId="@seat.SeatId" class="btn btn-sm btn-outline-success" style="width:36px;" title="Seat @seat.SeatNumber">@seat.ColumnNumber</a>
+                            }
+                        }
+                    </div>
+                }
+            </div>
+
+            <div class="d-flex justify-content-center gap-4 fs-10">
+                <span><span class="badge bg-outline-success border me-1">&nbsp;</span> Available</span>
+                <span><span class="badge bg-warning me-1">&nbsp;</span> In your cart</span>
+                <span><span class="badge bg-secondary me-1">&nbsp;</span> Booked</span>
+            </div>
+
+            <div class="text-center mt-3">
+                <a asp-area="Customer" asp-controller="Cart" asp-action="Index" class="btn btn-primary">
+                    <span class="fas fa-ticket-alt me-1"></span> Go to Cart
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+@section Notification {
+    <partial name="_NotificationPartial" />
+}
+
+@if (Model.RelatedMovies.Any())
+{
+    <h5 class="mt-5 mb-3">Related Movies</h5>
+    <div class="row g-3">
+        @foreach (var movie in Model.RelatedMovies)
+        {
+            <div class="col-md-6 col-lg-3">
+                <a href="/Customer/Home/Details/@movie.Id" class="text-decoration-none">
+                    <div class="card h-100">
+                        <img class="card-img-top" src="/imgs/movies/@movie.MainImg" style="height:220px;object-fit:cover;" alt="@movie.Name" />
+                        <div class="card-body">
+                            <h6 class="mb-1 text-body">@movie.Name</h6>
+                            <span class="badge text-bg-primary">@movie.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+}

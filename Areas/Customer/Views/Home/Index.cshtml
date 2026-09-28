@@ -1,0 +1,88 @@
+@model MovieWithFilterVM
+
+@{
+    ViewData["Title"] = "Movies";
+}
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form class="row g-2">
+            <div class="col-md-3">
+                <input type="text" class="form-control" placeholder="Search movies" name="name" value="@Model.Name">
+            </div>
+            <div class="col-md-2">
+                <input type="number" step="0.01" class="form-control" placeholder="Min Price" name="minPrice" value="@Model.MinPrice">
+            </div>
+            <div class="col-md-2">
+                <input type="number" step="0.01" class="form-control" placeholder="Max Price" name="maxPrice" value="@Model.MaxPrice">
+            </div>
+            <div class="col-md-2">
+                <select name="categoryId" class="form-select">
+                    <option value="">All Categories</option>
+                    @foreach (var c in Model.Categories)
+                    {
+                        <option value="@c.Id" selected="@(Model.CategoryId == c.Id)">@c.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="cinemaId" class="form-select">
+                    <option value="">All Cinemas</option>
+                    @foreach (var c in Model.Cinemas)
+                    {
+                        <option value="@c.Id" selected="@(Model.CinemaId == c.Id)">@c.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-primary w-100">Go</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (!Model.Movies.Any())
+{
+    <div class="text-center py-5">
+        <span class="fas fa-film fs-1 text-muted mb-3 d-block"></span>
+        <p class="text-muted">No movies found.</p>
+    </div>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var movie in Model.Movies)
+        {
+            <div class="col-md-6 col-lg-3">
+                <a href="/Customer/Home/Details/@movie.Id" class="text-decoration-none">
+                    <div class="card h-100">
+                        <img class="card-img-top" src="/imgs/movies/@movie.MainImg" style="height:260px;object-fit:cover;" alt="@movie.Name" />
+                        <div class="card-body">
+                            <h6 class="mb-1 text-body">@movie.Name</h6>
+                            <p class="fs-10 text-muted mb-1">@movie.Category?.Name &middot; @movie.Cinema?.Name</p>
+                            <p class="fs-10 text-muted mb-2">@movie.DateTime.ToString("yyyy-MM-dd hh:mm tt")</p>
+                            <span class="badge text-bg-primary">@movie.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center mb-0">
+            @if (Model.CurrentPage > 1)
+            {
+                <li class="page-item"><a class="page-link" href="/Customer/Home/Index?page=@(Model.CurrentPage - 1)">&laquo;</a></li>
+            }
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")"><a class="page-link" href="/Customer/Home/Index?page=@i">@i</a></li>
+            }
+            @if (Model.CurrentPage != Model.TotalPages)
+            {
+                <li class="page-item"><a class="page-link" href="/Customer/Home/Index?page=@(Model.CurrentPage + 1)">&raquo;</a></li>
+            }
+        </ul>
+    </nav>
+}

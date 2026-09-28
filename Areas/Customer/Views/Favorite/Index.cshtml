@@ -1,0 +1,32 @@
+@model IEnumerable<Movie>
+
+@{
+    ViewData["Title"] = "My Favorites";
+}
+
+<h4 class="mb-3">My Favorites</h4>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">You haven't added any movies to your favorites yet.</p>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var movie in Model)
+        {
+            <div class="col-md-6 col-lg-3">
+                <a href="/Customer/Home/Details/@movie.Id" class="text-decoration-none">
+                    <div class="card h-100">
+                        <img class="card-img-top" src="/imgs/movies/@movie.MainImg" style="height:220px;object-fit:cover;" alt="@movie.Name" />
+                        <div class="card-body">
+                            <h6 class="mb-1 text-body">@movie.Name</h6>
+                            <p class="fs-10 text-muted mb-1">@movie.Category?.Name &middot; @movie.Cinema?.Name</p>
+                            <span class="badge text-bg-primary">@movie.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+}

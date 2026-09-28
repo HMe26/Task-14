@@ -1,0 +1,93 @@
+@model OrderWithFilterVM
+
+<div class="row g-3 mb-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex flex-between-center">
+                <h5 class="mb-0">Payments &amp; Bookings</h5>
+            </div>
+            <div class="card-body border-top">
+                <form class="row g-2 mb-3">
+                    <div class="col-md-3">
+                        <input type="number" class="form-control" placeholder="Search by order #" name="query" value="@Model.Query">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Filter</button>
+                    </div>
+                </form>
+
+                <div class="table-responsive scrollbar">
+                    <table class="table table-sm fs-9 mb-0">
+                        <thead class="bg-body-tertiary">
+                            <tr>
+                                <th class="text-900">Order #</th>
+                                <th class="text-900">Customer</th>
+                                <th class="text-900">Date</th>
+                                <th class="text-900">Total</th>
+                                <th class="text-900">Method</th>
+                                <th class="text-900">Payment</th>
+                                <th class="text-900 text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model.Orders)
+                            {
+                                <tr class="border-bottom border-200">
+                                    <td class="align-middle fw-semi-bold">#@order.Id</td>
+                                    <td class="align-middle">@order.ApplicationUser.FirstName @order.ApplicationUser.LastName</td>
+                                    <td class="align-middle">@order.PaymentDate?.ToString("dd MMM yyyy, hh:mm tt")</td>
+                                    <td class="align-middle">@order.TotalPrice.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</td>
+                                    <td class="align-middle">
+                                        @if (order.PaymentMethod == PaymentMethod.Cash)
+                                        {
+                                            <span class="badge text-bg-warning">Cash</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge text-bg-info">Online</span>
+                                        }
+                                    </td>
+                                    <td class="align-middle">
+                                        @if (order.PaymentStatus == PaymentStatus.Succussed)
+                                        {
+                                            <span class="badge text-bg-success">Paid</span>
+                                        }
+                                        else if (order.PaymentStatus == PaymentStatus.Pending)
+                                        {
+                                            <span class="badge text-bg-secondary">Pending</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge text-bg-danger">@order.PaymentStatus</span>
+                                        }
+                                    </td>
+                                    <td class="align-middle text-end">
+                                        <a href="/Admin/Order/Details/@order.Id" class="btn btn-sm btn-outline-primary">View</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-center border-top">
+                <nav>
+                    <ul class="pagination mb-0">
+                        @if (Model.CurrentPage > 1)
+                        {
+                            <li class="page-item"><a class="page-link" href="/Admin/Order/Index?page=@(Model.CurrentPage - 1)">&laquo;</a></li>
+                        }
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")"><a class="page-link" href="/Admin/Order/Index?page=@i">@i</a></li>
+                        }
+                        @if (Model.CurrentPage != Model.TotalPages)
+                        {
+                            <li class="page-item"><a class="page-link" href="/Admin/Order/Index?page=@(Model.CurrentPage + 1)">&raquo;</a></li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>

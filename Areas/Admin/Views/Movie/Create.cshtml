@@ -1,0 +1,103 @@
+@model MovieWithDetailsVM
+
+<div class="row g-3 mb-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Create New Movie</h5>
+            </div>
+            <div class="card-body border-top">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <form method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input class="form-control" name="Name" value="@Model.Movie?.Name">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="Des" placeholder="Movie description">@Model.Movie?.Des</textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Price</label>
+                            <input type="number" step="0.01" class="form-control" name="Price" value="@(Model.Movie != null && Model.Movie.Price > 0 ? Model.Movie.Price.ToString() : "")">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Total Seats</label>
+                            <input type="number" min="1" max="500" class="form-control" name="TotalSeats" value="100">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Date</label>
+                            <input type="date" class="form-control" name="MovieDate" min="@DateTime.Today.ToString("yyyy-MM-dd")">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label d-block">Time</label>
+                            <div class="d-flex gap-1">
+                                <select name="Hour" class="form-select">
+                                    @for (int h = 1; h <= 12; h++)
+                                    {
+                                        <option value="@h">@h</option>
+                                    }
+                                </select>
+                                <select name="Minute" class="form-select">
+                                    @for (int m = 0; m < 60; m++)
+                                    {
+                                        <option value="@m">@m.ToString("00")</option>
+                                    }
+                                </select>
+                                <select name="AmPm" class="form-select">
+                                    <option value="AM">AM</option>
+                                    <option value="PM">PM</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Status</label>
+                            <select name="Status" class="form-select">
+                                <option value="true">Active</option>
+                                <option value="false" selected>In Active</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Category</label>
+                            <select name="CategoryId" class="form-select" asp-items="Model.Categories"></select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Cinema</label>
+                            <select name="CinemaId" class="form-select" asp-items="Model.Cinemas"></select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Main Image</label>
+                        <input type="file" class="form-control" name="mainImg" accept="image/*">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Sub Images</label>
+                        <input type="file" class="form-control" name="subImgs" accept="image/*" multiple>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label d-block">Actors</label>
+                        @foreach (var actor in Model.AllActors)
+                        {
+                            var isChecked = Model.SelectedActorIds.Contains(actor.Id);
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" name="actorIds" value="@actor.Id" id="actor-@actor.Id" checked="@isChecked">
+                                <label class="form-check-label" for="actor-@actor.Id">@actor.Name</label>
+                            </div>
+                        }
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <a href="/Admin/Movie/Index" class="btn btn-falcon-default">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Notification {
+    <partial name="_NotificationPartial" />
+}
